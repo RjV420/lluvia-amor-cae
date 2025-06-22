@@ -12,6 +12,7 @@
       background: #050505;
       height: 100%;
       font-family: 'Arial', sans-serif;
+      cursor: pointer;
     }
 
     canvas {
@@ -110,6 +111,7 @@
       font-weight: bold;
       box-shadow: 0 0 10px #ff69b4;
       transition: all 0.3s ease;
+      pointer-events: auto;
     }
 
     .memory-button:hover {
@@ -133,6 +135,7 @@
       display: none;
       overflow-y: auto;
       box-shadow: 0 0 30px #ff1493;
+      pointer-events: auto;
     }
 
     .memory-box h2 {
@@ -173,6 +176,11 @@
       to { box-shadow: 0 0 25px #ff1493; }
     }
 
+    @keyframes destello {
+      0% { transform: scale(0.5); opacity: 1; }
+      100% { transform: scale(1.5); opacity: 0; }
+    }
+
     @media (max-width: 768px) {
       .center-message {
         font-size: 10vw;
@@ -197,7 +205,7 @@
 
 <div class="overlay">
   <div class="center-message">TE AMO MI HEIDY HERMOSA ❤️</div>
-  <div class="sub-message">Eres muy valiente, hermosa y poderosa<br> la mujer más maravillosa</div>
+  <div class="sub-message">Eres la luz de mi vida, mi razón de ser<br>y la mujer más maravillosa que he conocido</div>
 </div>
 
 <div class="date-counter" id="dateCounter"></div>
@@ -210,12 +218,12 @@
 
 <div class="memory-box" id="memoryBox">
   <button class="close-btn" id="closeMemoryBtn">×</button>
-  <h2>Click para leer</h2>
+  <h2>Nuestra Historia de Amor</h2>
   <p>Querida Heidy,</p>
-  <p>Gracias por un mes más juntos, amándonos, riéndonos, creando y siendo nosotros mismos.</p>
-  <p>Eres mi compañera, mi confidente, mi mejor amiga y el amor de mi vida. Cada día agradezco tu presencia.</p>
-  <p>Este regalo aunque virtual es para recordar que te mereces todo lo bonito y especial del mundo.</p>
-  <p>Con todo mi amor,<br>Jeanpierre</p>
+  <p>Desde el momento en que te conocí, mi vida cambió para siempre. Recuerdo cada sonrisa, cada mirada, cada momento que hemos compartido juntos.</p>
+  <p>Eres mi compañera, mi confidente, mi mejor amiga y el amor de mi vida. Cada día a tu lado es un regalo que atesoro con todo mi corazón.</p>
+  <p>Este espacio es para recordar todos los momentos especiales que hemos vivido y los muchos más que vendrán.</p>
+  <p>Con todo mi amor,<br>Tu pareja que te adora</p>
 </div>
 
 <script>
@@ -264,7 +272,7 @@
   let drops = new Array(columns).fill(1);
 
   const colors = ['#ff69b4', '#ff1493', '#ffa07a', '#ffc0cb', '#db7093', '#ffb6c1', '#ff82ab', '#ee1289'];
-  const symbols = ["❤", "❣", "💖", "💕", "💘", "✨", "★", "☆"]; // Cambié los símbolos para evitar texto repetido
+  const symbols = ["❤", "❣", "💖", "💕", "💘", "✨", "★", "☆"];
 
   // 🌌 Galaxia de símbolos
   const galaxy = [];
@@ -356,6 +364,62 @@
     }
   }
 
+  // ✨ Destellos al hacer clic
+  const destellos = [];
+  
+  function createDestello(x, y) {
+    const size = 50 + Math.random() * 100;
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    
+    destellos.push({
+      x, y,
+      size,
+      color,
+      life: 100,
+      currentSize: size * 0.5
+    });
+  }
+
+  function drawDestellos() {
+    destellos.forEach((d, index) => {
+      const progress = 1 - (d.life / 100);
+      const size = d.size * (0.5 + progress * 0.5);
+      const opacity = 1 - progress;
+      
+      ctx.globalAlpha = opacity;
+      ctx.fillStyle = d.color;
+      
+      // Dibujar destello central
+      ctx.beginPath();
+      ctx.arc(d.x, d.y, size * 0.3, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Dibujar rayos del destello
+      for (let i = 0; i < 8; i++) {
+        const angle = (Math.PI * 2 * i) / 8;
+        const rayLength = size * 0.7;
+        const rayWidth = size * 0.1;
+        
+        ctx.save();
+        ctx.translate(d.x, d.y);
+        ctx.rotate(angle);
+        
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(rayLength, -rayWidth);
+        ctx.lineTo(rayLength, rayWidth);
+        ctx.closePath();
+        ctx.fill();
+        
+        ctx.restore();
+      }
+      
+      d.life -= 2;
+      if (d.life <= 0) destellos.splice(index, 1);
+    });
+    ctx.globalAlpha = 1;
+  }
+
   // Foto de Heidy con efecto de carga
   lovedPhoto.onerror = function() {
     this.src = "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150' viewBox='0 0 150 150'%3E%3Crect fill='%23ff69b4' width='150' height='150'/%3E%3Ctext fill='%23ffffff' font-family='Arial' font-size='60' dy='.4em' text-anchor='middle' x='75' y='80'%3EHeidy%3C/text%3E%3C/svg%3E";
@@ -369,11 +433,12 @@
     drawGalaxy();
     drawHearts();
     drawFireworks();
+    drawDestellos();
 
     if (Math.random() > 0.94) createHeart();
     if (Math.random() > 0.96) createExplosion();
 
-    // Efecto de matriz con símbolos en lugar de texto
+    // Efecto de matriz con símbolos
     for (let i = 0; i < drops.length; i++) {
       const x = i * fontSize * 4;
       const y = drops[i] * fontSize;
@@ -385,6 +450,18 @@
       drops[i]++;
     }
   }
+
+  // Interacciones de clic
+  document.addEventListener('click', (e) => {
+    createExplosion(e.clientX, e.clientY);
+    createDestello(e.clientX, e.clientY);
+  });
+
+  document.addEventListener('touchstart', (e) => {
+    const touch = e.touches[0];
+    createExplosion(touch.clientX, touch.clientY);
+    createDestello(touch.clientX, touch.clientY);
+  });
 
   // Iniciar animaciones
   setInterval(draw, 50);
