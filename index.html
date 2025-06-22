@@ -6,18 +6,39 @@
   <meta name="theme-color" content="#050505" />
   <title>Te Amo mi Heidy hermosa ❤️</title>
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Orbitron:wght@500&display=swap" rel="stylesheet">
+  <!-- Preload de fuentes para mejor performance -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400&display=swap" as="style">
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
+
+  <!-- Favicon para GitHub Pages -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❤️</text></svg>">
 
   <style>
+    :root {
+      --color-primary: #ff69b4;
+      --color-secondary: #ff1493;
+      --color-light: #ffb6c1;
+      --color-dark: #050505;
+    }
+
     html, body {
       margin: 0;
       padding: 0;
       overflow: hidden;
-      background: #050505;
+      background: var(--color-dark);
       height: 100%;
-      font-family: 'Orbitron', sans-serif;
+      font-family: 'Poppins', sans-serif;
       cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
     }
 
     .overlay {
@@ -32,79 +53,418 @@
       align-items: center;
       justify-content: center;
       pointer-events: none;
+      padding: 20px;
+      box-sizing: border-box;
     }
 
     .center-message {
       font-family: 'Great Vibes', cursive;
-      color: #ff69b4;
-      font-size: 6vw;
+      color: var(--color-primary);
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
       text-align: center;
-      opacity: 0.85;
-      text-shadow: 0 0 10px #ff69b4, 0 0 20px #ff1493, 0 0 30px #ff1493;
+      opacity: 0;
+      text-shadow: 0 0 10px var(--color-primary), 0 0 20px var(--color-secondary), 0 0 30px var(--color-secondary);
       margin-bottom: 20px;
-      white-space: nowrap;
-      overflow: hidden;
-      border-right: 2px solid #ff69b4;
-      animation: typing 4s steps(40, end) forwards, blink 0.7s infinite;
+      animation: fadeIn 2s ease-in-out forwards 0.5s;
+      line-height: 1.2;
     }
 
     .sub-message {
-      font-family: 'Courier New', monospace;
-      color: #ffb6c1;
-      font-size: 2vw;
+      font-family: 'Poppins', sans-serif;
+      color: var(--color-light);
+      font-size: clamp(1rem, 2vw, 1.5rem);
       text-align: center;
-      opacity: 0.7;
-      text-shadow: 0 0 5px #ff69b4;
-      animation: fadeIn 4s ease-in-out 2s forwards;
+      opacity: 0;
+      text-shadow: 0 0 5px var(--color-primary);
       max-width: 80%;
       line-height: 1.5;
+      animation: fadeIn 2s ease-in-out forwards 1s;
+    }
+
+    .date-counter {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      color: var(--color-light);
+      font-size: clamp(0.9rem, 1.2vw, 1.2rem);
+      z-index: 4;
+      background: rgba(5, 5, 5, 0.7);
+      padding: 10px 15px;
+      border-radius: 10px;
       opacity: 0;
+      animation: fadeIn 2s ease-in-out forwards 1.5s;
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 105, 180, 0.3);
     }
 
-    @keyframes typing {
-      from { width: 0 }
-      to { width: 100% }
+    .photo-frame {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      width: clamp(100px, 10vw, 150px);
+      height: clamp(100px, 10vw, 150px);
+      border: 3px solid var(--color-primary);
+      border-radius: 10px;
+      overflow: hidden;
+      z-index: 4;
+      opacity: 0;
+      box-shadow: 0 0 15px var(--color-primary);
+      animation: fadeIn 2s ease-in-out forwards 2s, pulse 3s ease-in-out infinite alternate;
+      background: rgba(5, 5, 5, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(2px);
+      transition: transform 0.3s ease;
     }
 
-    @keyframes blink {
-      0% { border-color: transparent; }
-      50% { border-color: #ff69b4; }
-      100% { border-color: transparent; }
+    .photo-frame:hover {
+      transform: scale(1.05);
+    }
+
+    .photo-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .photo-frame:hover img {
+      transform: scale(1.1);
+    }
+
+    .memory-button {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 10;
+      background: rgba(255, 105, 180, 0.7);
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 400;
+      box-shadow: 0 0 10px var(--color-primary);
+      transition: all 0.3s ease;
+      pointer-events: auto;
+      opacity: 0;
+      animation: fadeIn 2s ease-in-out forwards 2.5s;
+      backdrop-filter: blur(5px);
+    }
+
+    .memory-button:hover {
+      background: rgba(255, 20, 147, 0.9);
+      transform: scale(1.05);
+      box-shadow: 0 0 15px var(--color-secondary);
+    }
+
+    .memory-box {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 90%;
+      max-width: 600px;
+      max-height: 80vh;
+      background: rgba(5, 5, 5, 0.95);
+      border: 2px solid var(--color-primary);
+      border-radius: 15px;
+      padding: 25px;
+      z-index: 11;
+      display: none;
+      overflow-y: auto;
+      box-shadow: 0 0 30px var(--color-secondary);
+      pointer-events: auto;
+      backdrop-filter: blur(10px);
+      opacity: 0;
+      animation: fadeIn 0.5s ease-in-out forwards;
+    }
+
+    .memory-box h2 {
+      color: var(--color-primary);
+      text-align: center;
+      margin-bottom: 20px;
+      font-family: 'Great Vibes', cursive;
+      font-size: 2.2rem;
+    }
+
+    .memory-box p {
+      color: var(--color-light);
+      line-height: 1.6;
+      margin-bottom: 15px;
+      font-size: 1rem;
+    }
+
+    .memory-box .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      color: var(--color-primary);
+      font-size: 1.8rem;
+      cursor: pointer;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background 0.3s ease;
+    }
+
+    .memory-box .close-btn:hover {
+      background: rgba(255, 105, 180, 0.2);
+    }
+
+    .heart-animation {
+      position: absolute;
+      pointer-events: none;
+      z-index: 2;
+      animation: float 4s ease-in-out infinite;
     }
 
     @keyframes fadeIn {
-      to { opacity: 0.7; }
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 15px var(--color-primary); }
+      50% { box-shadow: 0 0 25px var(--color-secondary); }
+      100% { box-shadow: 0 0 15px var(--color-primary); }
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
     }
 
     @media (max-width: 768px) {
       .center-message {
-        font-size: 10vw;
+        font-size: clamp(2rem, 10vw, 3rem);
       }
+      
       .sub-message {
-        font-size: 4vw;
+        font-size: clamp(0.9rem, 4vw, 1.2rem);
       }
+      
+      .photo-frame {
+        width: 80px;
+        height: 80px;
+      }
+      
+      .memory-box {
+        width: 85%;
+        padding: 20px 15px;
+      }
+      
+      .memory-box h2 {
+        font-size: 1.8rem;
+      }
+    }
+
+    /* Scrollbar personalizada para el memory box */
+    .memory-box::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .memory-box::-webkit-scrollbar-track {
+      background: rgba(5, 5, 5, 0.3);
+      border-radius: 10px;
+    }
+
+    .memory-box::-webkit-scrollbar-thumb {
+      background: var(--color-primary);
+      border-radius: 10px;
+    }
+
+    .memory-box::-webkit-scrollbar-thumb:hover {
+      background: var(--color-secondary);
     }
   </style>
 </head>
 <body>
 
-<audio id="bgMusic" loop playsinline preload="auto">
-  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_f0817cc1aa.mp3?filename=romantic-love-112195.mp3" type="audio/mp3">
+<!-- Audio optimizado con múltiples fuentes para compatibilidad -->
+<audio id="bgMusic" loop preload="auto">
+  <source src="https://assets.mixkit.co/music/preview/mixkit-romantic-song-for-a-date-1694.mp3" type="audio/mpeg">
+  <source src="https://assets.mixkit.co/music/preview/mixkit-romantic-song-for-a-date-1694.ogg" type="audio/ogg">
+  Tu navegador no soporta el elemento de audio.
 </audio>
 
+<canvas id="canvas"></canvas>
+
 <div class="overlay">
-  <div class="center-message">TE AMO MI HEIDY HERMOSA ❤️</div>
+  <div class="center-message"></div>
   <div class="sub-message">Eres la luz de mi vida, mi razón de ser<br>y la mujer más maravillosa que he conocido</div>
 </div>
 
-<script>
-  const bgMusic = document.getElementById("bgMusic");
-  document.body.addEventListener("click", () => {
-    bgMusic.volume = 0.5;
-    bgMusic.play().catch(e => console.log("Audio bloqueado"));
-  }, { once: true });
-</script>
+<div class="date-counter" id="dateCounter"></div>
 
-</body>
-</html>
+<!-- Foto con enlace absoluto para GitHub Pages -->
+<div class="photo-frame">
+  <img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Foto de Heidy" id="lovedPhoto">
+</div>
+
+<button class="memory-button" id="memoryBtn">Nuestros Recuerdos</button>
+
+<div class="memory-box" id="memoryBox">
+  <button class="close-btn" id="closeMemoryBtn">×</button>
+  <h2>Nuestra Historia de Amor</h2>
+  <p>Querida Heidy,</p>
+  <p>Desde el momento en que te conocí, mi vida cambió para siempre. Recuerdo cada sonrisa, cada mirada, cada momento que hemos compartido juntos como si fuera ayer.</p>
+  <p>Eres mi compañera de vida, mi confidente, mi mejor amiga y el amor más grande que he conocido. Cada día a tu lado es un regalo que atesoro con todo mi corazón.</p>
+  <p>Me enamoro más de ti con cada amanecer que compartimos, con cada risa que nos une y con cada desafío que superamos juntos.</p>
+  <p>Este espacio es para recordar todos los momentos especiales que hemos vivido y los muchos más que vendrán. Porque contigo, cada día es una nueva aventura y cada instante es un recuerdo que atesorar.</p>
+  <p>Con todo mi amor,<br>Tu pareja que te adora</p>
+</div>
+
+<script>
+  // Configuración inicial
+  document.addEventListener('DOMContentLoaded', function() {
+    // Elementos del DOM
+    const bgMusic = document.getElementById('bgMusic');
+    const memoryBtn = document.getElementById('memoryBtn');
+    const memoryBox = document.getElementById('memoryBox');
+    const closeMemoryBtn = document.getElementById('closeMemoryBtn');
+    const dateCounter = document.getElementById('dateCounter');
+    
+    // Reproducir música al hacer clic en cualquier parte
+    document.body.addEventListener('click', function() {
+      bgMusic.volume = 0.3;
+      bgMusic.play().catch(e => console.log("Reproducción de audio bloqueada: ", e));
+    }, { once: true });
+    
+    // Efecto máquina de escribir
+    const message = "TE AMO MI HEIDY HERMOSA ❤️";
+    const msgEl = document.querySelector('.center-message');
+    msgEl.textContent = "";
+    let i = 0;
+    
+    function typeWriter() {
+      if (i < message.length) {
+        msgEl.textContent += message.charAt(i);
+        i++;
+        setTimeout(typeWriter, 100);
+      }
+    }
+    
+    setTimeout(typeWriter, 500);
+    
+    // Mostrar/ocultar memory box
+    memoryBtn.addEventListener('click', function() {
+      memoryBox.style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    });
+    
+    closeMemoryBtn.addEventListener('click', function() {
+      memoryBox.style.display = 'none';
+      document.body.style.overflow = '';
+    });
+    
+    // Cerrar memory box al hacer clic fuera
+    memoryBox.addEventListener('click', function(e) {
+      if (e.target === memoryBox) {
+        memoryBox.style.display = 'none';
+        document.body.style.overflow = '';
+      }
+    });
+    
+    // Contador de días juntos (ejemplo: desde el 1 de enero de 2020)
+    function updateDateCounter() {
+      const startDate = new Date('2020-01-01');
+      const today = new Date();
+      const diffTime = Math.abs(today - startDate);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      dateCounter.textContent = `${diffDays} días juntos ❤️`;
+    }
+    
+    updateDateCounter();
+    
+    // Crear corazones flotantes al hacer clic
+    document.addEventListener('click', function(e) {
+      createHeart(e.clientX, e.clientY);
+    });
+    
+    function createHeart(x, y) {
+      const heart = document.createElement('div');
+      heart.classList.add('heart-animation');
+      heart.innerHTML = '❤️';
+      heart.style.left = `${x}px`;
+      heart.style.top = `${y}px`;
+      heart.style.fontSize = `${Math.random() * 20 + 10}px`;
+      heart.style.animationDuration = `${Math.random() * 3 + 2}s`;
+      document.body.appendChild(heart);
+      
+      setTimeout(() => {
+        heart.remove();
+      }, 4000);
+    }
+    
+    // Animación de canvas con partículas
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Ajustar tamaño del canvas
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    
+    // Partículas
+    const particles = [];
+    const colors = ['#ff69b4', '#ff1493', '#ffb6c1', '#ff85a2', '#ff6b81'];
+    
+    class Particle {
+      constructor() {
+        this.reset();
+        this.y = Math.random() * canvas.height;
+      }
+      
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * -100;
+        this.size = Math.random() * 5 + 1;
+        this.speed = Math.random() * 0.5 + 0.1;
+        this.color = colors[Math.floor(Math.random() * colors.length)];
+        this.opacity = Math.random() * 0.6 + 0.1;
+        this.angle = Math.random() * Math.PI * 2;
+        this.velocity = Math.random() * 0.2 - 0.1;
+      }
+      
+      update() {
+        this.y += this.speed;
+        this.x += Math.sin(this.angle) * 0.5;
+        this.angle += this.velocity;
+        
+        if (this.y > canvas.height) {
+          this.reset();
+          this.y = -10;
+        }
+      }
+      
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.globalAlpha = this.opacity;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+    }
+    
+    // Crear partículas
+    for (let i = 0; i < 100; i++) {
+      particles.push(new Particle());
+    }
+    
+    // Animación
+    function animate() {
+      ctx.clearRect(
 
