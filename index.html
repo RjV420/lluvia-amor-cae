@@ -9,7 +9,7 @@
       margin: 0;
       padding: 0;
       overflow: hidden;
-      background: #050505; /* Negro extremadamente oscuro */
+      background: #050505;
       height: 100%;
       font-family: 'Arial', sans-serif;
     }
@@ -173,11 +173,6 @@
       to { box-shadow: 0 0 25px #ff1493; }
     }
 
-    @keyframes flotar {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-20px); }
-    }
-
     @media (max-width: 768px) {
       .center-message {
         font-size: 10vw;
@@ -238,7 +233,7 @@
   const lovedPhoto = document.getElementById("lovedPhoto");
   const bgMusic = document.getElementById("bgMusic");
 
-  // Configurar contador de días juntos (ejemplo: desde el 1 de enero de 2023)
+  // Configurar contador de días juntos
   const startDate = new Date("2023-01-01");
   const today = new Date();
   const diffTime = Math.abs(today - startDate);
@@ -248,15 +243,14 @@
   // Configurar interacción del botón de recuerdos
   memoryBtn.addEventListener("click", () => {
     memoryBox.style.display = "block";
-    bgMusic.volume = 0.3; // Bajar volumen cuando se ven los recuerdos
+    bgMusic.volume = 0.3;
   });
 
   closeMemoryBtn.addEventListener("click", () => {
     memoryBox.style.display = "none";
-    bgMusic.volume = 1.0; // Restaurar volumen
+    bgMusic.volume = 1.0;
   });
 
-  // Permitir cerrar el cuadro de recuerdos haciendo clic fuera
   window.addEventListener("click", (e) => {
     if (e.target === memoryBox) {
       memoryBox.style.display = "none";
@@ -270,11 +264,11 @@
   let drops = new Array(columns).fill(1);
 
   const colors = ['#ff69b4', '#ff1493', '#ffa07a', '#ffc0cb', '#db7093', '#ffb6c1', '#ff82ab', '#ee1289'];
+  const symbols = ["❤", "❣", "💖", "💕", "💘", "✨", "★", "☆"]; // Cambié los símbolos para evitar texto repetido
 
-  // 🌌 Galaxia de corazones y estrellas (aumentada a 500 elementos)
+  // 🌌 Galaxia de símbolos
   const galaxy = [];
   for (let i = 0; i < 500; i++) {
-    const isHeart = Math.random() > 0.3;
     galaxy.push({
       x: Math.random() * width,
       y: Math.random() * height,
@@ -283,7 +277,7 @@
       speedY: (Math.random() - 0.5) * 0.3,
       opacity: Math.random() * 0.15 + 0.05,
       color: colors[Math.floor(Math.random() * colors.length)],
-      symbol: isHeart ? "❤" : "✦"
+      symbol: symbols[Math.floor(Math.random() * symbols.length)]
     });
   }
 
@@ -305,7 +299,7 @@
     ctx.globalAlpha = 1;
   }
 
-  // ❤️ Corazones flotantes mejorados
+  // ❤️ Corazones flotantes
   const hearts = [];
   function createHeart() {
     hearts.push({
@@ -338,13 +332,12 @@
     ctx.globalAlpha = 1;
   }
 
-  // 🎇 Explosiones mejoradas
+  // 🎇 Explosiones
   const fireworks = [];
   function createExplosion(x = null, y = null) {
     const count = 40 + Math.floor(Math.random() * 40);
     x = x ?? Math.random() * width;
     y = y ?? Math.random() * height / 2;
-    const symbols = ["❤", "✨", "❣", "💖", "💕", "💘"];
     
     for (let i = 0; i < count; i++) {
       const angle = (Math.PI * 2 * i) / count;
@@ -363,88 +356,30 @@
     }
   }
 
-  // Mensajes flotantes de amor
-  const loveMessages = ["TE AMO", "HEIDY", "ERES MI TODO", "MI AMOR", "PARA SIEMPRE"];
-  const floatingMessages = [];
-  
-  function createFloatingMessage() {
-    floatingMessages.push({
-      text: loveMessages[Math.floor(Math.random() * loveMessages.length)],
-      x: Math.random() * width,
-      y: Math.random() * height,
-      size: 20 + Math.random() * 30,
-      opacity: 0.1,
-      targetOpacity: 0.7 + Math.random() * 0.3,
-      speed: 0.5 + Math.random() * 0.5,
-      color: colors[Math.floor(Math.random() * colors.length)],
-      life: 100 + Math.random() * 100,
-      growing: true
-    });
-  }
-
-  function drawFloatingMessages() {
-    floatingMessages.forEach((msg, index) => {
-      if (msg.growing) {
-        msg.opacity += 0.01;
-        if (msg.opacity >= msg.targetOpacity) msg.growing = false;
-      } else {
-        msg.opacity -= 0.005;
-      }
-      
-      msg.y -= msg.speed;
-      msg.life--;
-      
-      if (msg.life <= 0 || msg.opacity <= 0) {
-        floatingMessages.splice(index, 1);
-        return;
-      }
-      
-      ctx.globalAlpha = msg.opacity;
-      ctx.font = `${msg.size}px 'Brush Script MT', cursive`;
-      ctx.fillStyle = msg.color;
-      ctx.fillText(msg.text, msg.x, msg.y);
-    });
-    ctx.globalAlpha = 1;
-  }
-
-  // Interacciones
-  document.body.addEventListener("click", e => {
-    createExplosion(e.clientX, e.clientY);
-    createFloatingMessage();
-  });
-
-  document.body.addEventListener("touchstart", e => {
-    const touch = e.touches[0];
-    createExplosion(touch.clientX, touch.clientY);
-    createFloatingMessage();
-  });
-
-  // Foto de Heidy con efecto de carga (reemplaza con una foto real)
+  // Foto de Heidy con efecto de carga
   lovedPhoto.onerror = function() {
     this.src = "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150' viewBox='0 0 150 150'%3E%3Crect fill='%23ff69b4' width='150' height='150'/%3E%3Ctext fill='%23ffffff' font-family='Arial' font-size='60' dy='.4em' text-anchor='middle' x='75' y='80'%3EHeidy%3C/text%3E%3C/svg%3E";
   };
 
   // Función principal de dibujo
   function draw() {
-    ctx.fillStyle = "rgba(5, 5, 5, 0.2)"; /* Fondo extremadamente oscuro */
+    ctx.fillStyle = "rgba(5, 5, 5, 0.2)";
     ctx.fillRect(0, 0, width, height);
 
     drawGalaxy();
     drawHearts();
     drawFireworks();
-    drawFloatingMessages();
 
     if (Math.random() > 0.94) createHeart();
     if (Math.random() > 0.96) createExplosion();
-    if (Math.random() > 0.98) createFloatingMessage();
 
-    // Efecto de matriz de mensajes de amor
+    // Efecto de matriz con símbolos en lugar de texto
     for (let i = 0; i < drops.length; i++) {
       const x = i * fontSize * 4;
       const y = drops[i] * fontSize;
       ctx.fillStyle = colors[Math.floor(Math.random() * colors.length)];
       ctx.font = '16px monospace';
-      ctx.fillText(loveMessages[Math.floor(Math.random() * loveMessages.length)], x, y);
+      ctx.fillText(symbols[Math.floor(Math.random() * symbols.length)], x, y);
 
       if (y > height && Math.random() > 0.975) drops[i] = 0;
       drops[i]++;
@@ -462,7 +397,7 @@
     drops = new Array(columns).fill(1);
   });
 
-  // Reproducir música con interacción (para navegadores que lo requieren)
+  // Reproducir música con interacción
   document.body.addEventListener('click', () => {
     bgMusic.play().catch(e => console.log("La reproducción automática fue bloqueada"));
   }, { once: true });
